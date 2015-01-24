@@ -8,32 +8,14 @@
 require 'sinatra'
 require 'rethinkdb'
 
-#### Connection details
-
-# If the application is deployed to Cloud Foundry, then a
-# `$VCAP_SERVICES` environment variable is available (JSON format)
-# to describe the binding to a RethinkDB service instance.
-# If no `$VCAP_SERVICES` variable then application is not running
-# on Cloud Foundry.
-if ENV['VCAP_SERVICES']
-  services = JSON.parse(ENV['VCAP_SERVICES'])
-  if service = services["rethinkdb"].first
-    creds = service["credentials"]
-    rdb_config = {
-      :host => creds["hostname"] || creds["host"],
-      :port => creds["port"],
-      :db   => creds["name"] || 'repasties'
-    }
-  end
-end
 
 # If `rdb_config` not already setup, then look for environment
 # variables for location of RethinkDB server. Otherwise default
 # to a locally running server.
 rdb_config ||= {
-  :host => ENV['RDB_HOST'] || 'localhost',
-  :port => ENV['RDB_PORT'] || 28015,
-  :db   => ENV['RDB_DB']   || 'repasties'
+  :host => ENV['RDB_PORT_28015_TCP_ADDR'] || 'localhost',
+  :port => ENV['RDB_PORT_28015_TCP_PORT'] || 28015,
+  :db   => ENV['RDB_ENV_DB']   || 'repasties'
 }
 
 # A friendly shortcut for accessing ReQL functions
