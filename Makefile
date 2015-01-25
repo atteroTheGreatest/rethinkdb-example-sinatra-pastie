@@ -5,11 +5,11 @@ all    : build run
 run : .rethink build stop
 	docker run -d --name rdb -v /var/docker/rethinkdb:/data rethinkdb
 	@sleep 1
-	docker run -it --link rdb:rdb -p 9292:9292 --name $(NAME)_c $(NAME)
+	docker run -it --link rdb:rdb -p 9292:9292 --name $(NAME)_c -v `pwd`:/home/app $(NAME)
 
 build  : .built
 
-.built : .
+.built : Dockerfile Gemfile Gemfile.lock
 	docker build -t $(NAME) .
 	@docker inspect -f '{{.Id}}' $(NAME) > .built
 

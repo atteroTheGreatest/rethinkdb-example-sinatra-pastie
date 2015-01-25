@@ -14,4 +14,6 @@ ADD Gemfile.lock /home/app/
 RUN bundle
 ADD . /home/app
 
-ENTRYPOINT rackup
+EXPOSE 9292
+
+CMD rackup
