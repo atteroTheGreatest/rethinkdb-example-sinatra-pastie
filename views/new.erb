@@ -1,5 +1,6 @@
 <div class="snippet">
   <h1>Paste a new code snippet below:</h1>
+  HOSTNAME: <%= @hostname %>
   <form action="/" method="POST">
     <p><label for="name">Title: </label><input type="text" name="snippet_title" value="<%= @snippet[:title] %>"/></p>
     <textarea name="snippet_body" id="snippet_body" rows="20"><%= @snippet[:body] %></textarea>

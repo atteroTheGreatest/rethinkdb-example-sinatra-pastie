@@ -2,29 +2,46 @@ NAME   = pastie
  
 all    : build run
  
-run : .rethink build stop
-	docker run -d --name rdb -v /var/docker/rethinkdb:/data rethinkdb
-	@sleep 1
-	docker run -it --link rdb:rdb -p 9292:9292 --name $(NAME)_c -v `pwd`:/home/app $(NAME)
+run :	build stop nginx rethink addserver
 
-build  : .built
+build  : .built .rethink .nginx .jinja
 
 .built : Dockerfile Gemfile Gemfile.lock
 	docker build -t $(NAME) .
-	@docker inspect -f '{{.Id}}' $(NAME) > .built
+	docker inspect -f '{{.Id}}' $(NAME) > .built
+
+rethink: .rethink
+	docker run -d --name rdb -p 8080:8080 -v /var/docker/rethinkdb:/data rethinkdb
 
 .rethink :
 	docker pull rethinkdb 
-	@touch .rethink
+	touch .rethink
+
+nginx: .nginx
+	docker run -d -p 80:80 --name=nginx attero/nginx
+
+.nginx:
+	(cd nginx; docker build -t attero/nginx .)
+	touch .nginx
+
+.jinja:
+	(cd jinja; docker build -t attero/jinja .)
+	touch .jinja
 
 stop  :
-	@docker stop rdb > /dev/null && docker rm rdb > /dev/null
-	@docker stop $(NAME)_c > /dev/null && docker rm $(NAME)_c > /dev/null
+	docker rm -f nginx 2> /dev/null || true
+	docker rm -f rdb 2> /dev/null || true
+	docker rm -f `cat ids` 2> /dev/null || true
+	rm ids || true
+	rm jinja/hosts || true
 
-clean :
-	@rm .built
-	@rm .rethink
+addserver:
+	./add_server.sh
+
+clean : stop
+	rm .built
+	rm .rethink
 
 re     : clean all
  
-.PHONY : all build clean re run_rethink
+.PHONY : all build clean re 

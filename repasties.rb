@@ -85,6 +85,7 @@ end
 
 get '/' do
   @snippet = {}
+  @hostname = ENV["HOSTNAME"]
   erb :new
 end
 
