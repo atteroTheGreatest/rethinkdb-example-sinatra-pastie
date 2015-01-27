@@ -1,7 +1,5 @@
 NAME   = pastie
  
-all    : build run
- 
 run :	build stop nginx rethink addserver
 
 build  : .built .rethink .nginx .jinja
@@ -44,4 +42,4 @@ clean : stop
 
 re     : clean all
  
-.PHONY : all build clean re 
+.PHONY : clean re run nginx rethink
