@@ -5,7 +5,7 @@ with open('pasties.conf.j2') as f:
     nginx_template = Template(f.read())
 
 # load hosts from file
-with open('hosts') as f:
+with open('hosts', 'a+') as f:
     hosts = f.read().split()
 
 # print hosts
