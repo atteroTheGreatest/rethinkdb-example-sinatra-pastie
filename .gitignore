@@ -1,4 +1,6 @@
 .built
 .rethink
+.jinja
+.nginx
 jinja/hosts
 ids
